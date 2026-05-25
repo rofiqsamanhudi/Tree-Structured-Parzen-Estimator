@@ -1,0 +1,14 @@
+{
+  "lr": 0.00036681669354887524,
+  "batch_size": 32,
+  "dropout": 0.11545929276873033,
+  "weight_decay": 0.001439921671170037,
+  "layer_decay": 0.8005280054963044,
+  "unfreeze_init": "last_block",
+  "use_focal": true,
+  "focal_gamma": 1.2372815421259014,
+  "label_smoothing": 0.08065035670756877,
+  "warmup_epochs": 4,
+  "optimizer_name": "adamw",
+  "best_val_acc": 0.930976430976431
+}

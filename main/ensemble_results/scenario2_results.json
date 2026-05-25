@@ -1,0 +1,82 @@
+{
+  "ensemble": {
+    "accuracy": 0.9605,
+    "precision": 0.9713408393039918,
+    "recall": 0.949,
+    "f1": 0.9600404653515427,
+    "auc": 0.9939910000000001,
+    "threshold": 0.5
+  },
+  "individual": {
+    "densenet121": {
+      "accuracy": 0.952,
+      "precision": 0.950199203187251,
+      "recall": 0.954,
+      "f1": 0.9520958083832335,
+      "auc": 0.987352,
+      "threshold": 0.5
+    },
+    "inception_v3": {
+      "accuracy": 0.9535,
+      "precision": 0.9651282051282051,
+      "recall": 0.941,
+      "f1": 0.9529113924050633,
+      "auc": 0.9894050000000001,
+      "threshold": 0.5
+    },
+    "xception": {
+      "accuracy": 0.93,
+      "precision": 0.946985446985447,
+      "recall": 0.911,
+      "f1": 0.928644240570846,
+      "auc": 0.9818140000000001,
+      "threshold": 0.5
+    },
+    "vit_scratch": {
+      "accuracy": 0.951,
+      "precision": 0.9697916666666667,
+      "recall": 0.931,
+      "f1": 0.95,
+      "auc": 0.989805,
+      "threshold": 0.5
+    }
+  },
+  "weights": {
+    "densenet121": 0.17364764883008174,
+    "inception_v3": 0.1886397664552367,
+    "xception": 0.14829765054180394,
+    "vit_scratch": 0.4894149341728777
+  },
+  "paper_ref": {
+    "DenseNet-121": {
+      "accuracy": 0.945,
+      "precision": 0.939,
+      "recall": 0.9504,
+      "f1": 0.9447
+    },
+    "InceptionV3": {
+      "accuracy": 0.912,
+      "precision": 0.932,
+      "recall": 0.8962,
+      "f1": 0.9137
+    },
+    "Xception": {
+      "accuracy": 0.938,
+      "precision": 0.93,
+      "recall": 0.9451,
+      "f1": 0.9375
+    },
+    "ViT-Pretrained": {
+      "accuracy": 0.8825,
+      "precision": 0.905,
+      "recall": 0.866,
+      "f1": 0.885
+    },
+    "Ensemble": {
+      "accuracy": 0.9525,
+      "precision": 0.942,
+      "recall": 0.9622,
+      "f1": 0.952
+    }
+  }
+}

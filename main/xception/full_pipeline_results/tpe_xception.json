@@ -1,0 +1,13 @@
+{
+  "lr": 0.0037977679442478553,
+  "batch_size": 32,
+  "dropout": 0.5114381770563153,
+  "weight_decay": 0.0002576417442523316,
+  "unfreeze_init": "last_2_blocks",
+  "optimizer_name": "adamax",
+  "use_focal": true,
+  "focal_gamma": 0.9558703250838834,
+  "label_smoothing": 0.08125293463515076,
+  "scheduler_type": "onecycle",
+  "best_val_acc": 0.9163860830527497
+}
