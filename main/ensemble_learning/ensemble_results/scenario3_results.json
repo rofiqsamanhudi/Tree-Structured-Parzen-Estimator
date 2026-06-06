@@ -1,13 +1,21 @@
 {
-  "ensemble": {
-    "accuracy": 0.9605,
-    "precision": 0.9713408393039918,
-    "recall": 0.949,
-    "f1": 0.9600404653515427,
-    "auc": 0.9939910000000001,
+  "ds1_ensemble": {
+    "accuracy": 0.962,
+    "precision": 0.9685598377281948,
+    "recall": 0.955,
+    "f1": 0.9617321248741189,
+    "auc": 0.994203,
     "threshold": 0.5
   },
-  "individual": {
+  "ds2_ensemble": {
+    "accuracy": 0.974,
+    "precision": 0.9778225806451613,
+    "recall": 0.97,
+    "f1": 0.9738955823293173,
+    "auc": 0.99658,
+    "threshold": 0.5
+  },
+  "individual_ds1": {
     "densenet121": {
       "accuracy": 0.952,
       "precision": 0.950199203187251,
@@ -25,11 +33,11 @@
       "threshold": 0.5
     },
     "xception": {
-      "accuracy": 0.93,
-      "precision": 0.946985446985447,
-      "recall": 0.911,
-      "f1": 0.928644240570846,
-      "auc": 0.9818140000000001,
+      "accuracy": 0.938,
+      "precision": 0.9496919917864476,
+      "recall": 0.925,
+      "f1": 0.9371833839918946,
+      "auc": 0.985009,
       "threshold": 0.5
     },
     "vit_scratch": {
@@ -41,11 +49,39 @@
       "threshold": 0.5
     }
   },
-  "weights": {
-    "densenet121": 0.17364764883008174,
-    "inception_v3": 0.1886397664552367,
-    "xception": 0.14829765054180394,
-    "vit_scratch": 0.4894149341728777
+  "individual_ds2": {
+    "densenet121": {
+      "accuracy": 0.97,
+      "precision": 0.9644268774703557,
+      "recall": 0.976,
+      "f1": 0.9701789264413518,
+      "auc": 0.99024,
+      "threshold": 0.5
+    },
+    "inception_v3": {
+      "accuracy": 0.976,
+      "precision": 0.9817813765182186,
+      "recall": 0.97,
+      "f1": 0.9758551307847082,
+      "auc": 0.991324,
+      "threshold": 0.5
+    },
+    "xception": {
+      "accuracy": 0.953,
+      "precision": 0.9631901840490797,
+      "recall": 0.942,
+      "f1": 0.9524772497472194,
+      "auc": 0.9879,
+      "threshold": 0.5
+    },
+    "vit_scratch": {
+      "accuracy": 0.971,
+      "precision": 0.9757575757575757,
+      "recall": 0.966,
+      "f1": 0.9708542713567839,
+      "auc": 0.9962080000000001,
+      "threshold": 0.5
+    }
   },
   "paper_ref": {
     "DenseNet-121": {
