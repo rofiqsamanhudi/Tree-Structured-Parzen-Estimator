@@ -1,0 +1,6 @@
+Model,Paper Acc,DS1 Acc,DS2 Acc,DS1 Recall,DS1 AUC,Delta Acc,Best LR,Optimiser
+DenseNet-121,0.9450,0.9520,0.9700,0.9540,0.9874,+0.0070,9.03e-03,adamax
+InceptionV3,0.9120,0.9535,0.9760,0.9410,0.9894,+0.0415,3.33e-03,adamw
+Xception,0.9380,0.9380,0.9530,0.9250,0.9850,+0.0000,4.33e-04,adam
+ViT-Pretrained,0.8825,0.9510,0.9710,0.9310,0.9898,+0.0685,-,-
+Ensemble,0.9525,0.9620,0.9740,0.9550,0.9942,+0.0095,-,-

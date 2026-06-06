@@ -1,13 +1,13 @@
 {
-  "lr": 0.0037977679442478553,
+  "lr": 0.00043284502212938834,
   "batch_size": 32,
-  "dropout": 0.5114381770563153,
-  "weight_decay": 0.0002576417442523316,
-  "unfreeze_init": "last_2_blocks",
-  "optimizer_name": "adamax",
-  "use_focal": true,
-  "focal_gamma": 0.9558703250838834,
-  "label_smoothing": 0.08125293463515076,
+  "dropout": 0.429597545259111,
+  "weight_decay": 2.9380279387035354e-06,
+  "unfreeze_init": "last_block",
+  "optimizer_name": "adam",
+  "use_focal": false,
+  "focal_gamma": 2.1648852816008435,
+  "label_smoothing": 0.055480693281393136,
   "scheduler_type": "onecycle",
-  "best_val_acc": 0.9163860830527497
+  "best_val_acc": 0.9090909090909091
 }

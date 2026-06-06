@@ -1,0 +1,118 @@
+{
+  "ds1_ensemble": {
+    "accuracy": 0.962,
+    "precision": 0.9685598377281948,
+    "recall": 0.955,
+    "f1": 0.9617321248741189,
+    "auc": 0.994203,
+    "threshold": 0.5
+  },
+  "ds2_ensemble": {
+    "accuracy": 0.974,
+    "precision": 0.9778225806451613,
+    "recall": 0.97,
+    "f1": 0.9738955823293173,
+    "auc": 0.99658,
+    "threshold": 0.5
+  },
+  "individual_ds1": {
+    "densenet121": {
+      "accuracy": 0.952,
+      "precision": 0.950199203187251,
+      "recall": 0.954,
+      "f1": 0.9520958083832335,
+      "auc": 0.987352,
+      "threshold": 0.5
+    },
+    "inception_v3": {
+      "accuracy": 0.9535,
+      "precision": 0.9651282051282051,
+      "recall": 0.941,
+      "f1": 0.9529113924050633,
+      "auc": 0.9894050000000001,
+      "threshold": 0.5
+    },
+    "xception": {
+      "accuracy": 0.938,
+      "precision": 0.9496919917864476,
+      "recall": 0.925,
+      "f1": 0.9371833839918946,
+      "auc": 0.985009,
+      "threshold": 0.5
+    },
+    "vit_scratch": {
+      "accuracy": 0.951,
+      "precision": 0.9697916666666667,
+      "recall": 0.931,
+      "f1": 0.95,
+      "auc": 0.989805,
+      "threshold": 0.5
+    }
+  },
+  "individual_ds2": {
+    "densenet121": {
+      "accuracy": 0.97,
+      "precision": 0.9644268774703557,
+      "recall": 0.976,
+      "f1": 0.9701789264413518,
+      "auc": 0.99024,
+      "threshold": 0.5
+    },
+    "inception_v3": {
+      "accuracy": 0.976,
+      "precision": 0.9817813765182186,
+      "recall": 0.97,
+      "f1": 0.9758551307847082,
+      "auc": 0.991324,
+      "threshold": 0.5
+    },
+    "xception": {
+      "accuracy": 0.953,
+      "precision": 0.9631901840490797,
+      "recall": 0.942,
+      "f1": 0.9524772497472194,
+      "auc": 0.9879,
+      "threshold": 0.5
+    },
+    "vit_scratch": {
+      "accuracy": 0.971,
+      "precision": 0.9757575757575757,
+      "recall": 0.966,
+      "f1": 0.9708542713567839,
+      "auc": 0.9962080000000001,
+      "threshold": 0.5
+    }
+  },
+  "paper_ref": {
+    "DenseNet-121": {
+      "accuracy": 0.945,
+      "precision": 0.939,
+      "recall": 0.9504,
+      "f1": 0.9447
+    },
+    "InceptionV3": {
+      "accuracy": 0.912,
+      "precision": 0.932,
+      "recall": 0.8962,
+      "f1": 0.9137
+    },
+    "Xception": {
+      "accuracy": 0.938,
+      "precision": 0.93,
+      "recall": 0.9451,
+      "f1": 0.9375
+    },
+    "ViT-Pretrained": {
+      "accuracy": 0.8825,
+      "precision": 0.905,
+      "recall": 0.866,
+      "f1": 0.885
+    },
+    "Ensemble": {
+      "accuracy": 0.9525,
+      "precision": 0.942,
+      "recall": 0.9622,
+      "f1": 0.952
+    }
+  }
+}
