@@ -24,7 +24,7 @@ The work replicates and extends the ensemble framework of **Sarıateş & Özbay 
 
 ### Scenario I — Individual models (DS1 test set, TTA ×10)
 
-| Model | Accuracy | Precision | Recall | F1-Score | AUC | Paper Acc | Δ |
+| Model | Accuracy | Precision | Recall | F1-Score | AUC | Paper Acc | Δ Acc |
 |---|---|---|---|---|---|---|---|
 | DenseNet-121 | 95.20% | 95.02% | 95.40% | 95.21% | 0.9874 | 94.50% | +0.70% |
 | InceptionV3 | 95.35% | 96.51% | 94.10% | 95.29% | 0.9894 | 91.20% | +4.15% |
@@ -79,18 +79,21 @@ No model degraded when evaluated on DS2. All four architectures, trained exclusi
 
 ### CNN Models
 
+All three CNN models share the same 10-parameter search space. The table below shows the complete best parameters found by TPE for each model.
+
 | Hyperparameter | DenseNet-121 | InceptionV3 | Xception |
 |---|---|---|---|
 | Learning rate | 9.03 × 10⁻³ | 3.33 × 10⁻³ | 4.33 × 10⁻⁴ |
 | Optimizer | Adamax | AdamW | Adam |
 | Unfreeze init | last_2_blocks | last_2_blocks | last_block |
 | Batch size | 64 | 64 | 32 |
-| Dropout | 0.258 | 0.220 | 0.430 |
+| Dropout | 0.258 | 0.394 | 0.430 |
+| Weight decay | 1.45 × 10⁻⁴ | 8.14 × 10⁻⁶ | 2.94 × 10⁻⁶ |
 | Focal loss | No | No | No |
+| Focal gamma | 1.702 | 1.290 | 2.165 |
+| Label smoothing | 0.028 | 0.114 | 0.055 |
 | LR scheduler | OneCycle | Cosine | OneCycle |
-| Label smoothing | — | — | 0.055 |
-| Weight decay | — | — | 2.94 × 10⁻⁶ |
-| Best val acc (TPE) | — | — | 0.9091 |
+| Best val acc (TPE) | 0.9220 | 0.9091 | 0.9091 |
 
 ### ViT-Small/16
 
@@ -100,9 +103,10 @@ No model degraded when evaluated on DS2. All four architectures, trained exclusi
 | Optimizer | AdamW |
 | Batch size | 32 |
 | Dropout | 0.115 |
-| Layer decay | 0.801 |
+| Weight decay | 1.44 × 10⁻³ |
+| Layer decay (LLRD) | 0.801 |
 | Unfreeze init | last_block |
-| Focal loss | Yes (γ = 1.24) |
+| Focal loss | Yes (γ = 1.237) |
 | Label smoothing | 0.081 |
 | Warmup epochs | 4 |
 | Best val acc (TPE) | 0.9310 |
