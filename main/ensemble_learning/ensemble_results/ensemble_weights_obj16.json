@@ -1,0 +1,9 @@
+{
+  "objective": "0.7 x AUC + 0.1 x Recall + 0.1 x Precision + 0.1 x Accuracy",
+  "weights": {
+    "densenet121": 0.20152530898672272,
+    "inception_v3": 0.25745890164241886,
+    "xception": 0.2068290021959847,
+    "vit_scratch": 0.33418678717487366
+  }
+}
