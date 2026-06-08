@@ -177,8 +177,36 @@ OBJ-16 uniquely combined higher DS2 Accuracy (0.975 vs 0.974), higher DS2 Recall
 │   │   │   ├── scenario3_comparison.png
 │   │   │   ├── scenario3_confmat.png
 │   │   │   └── scenario3_results.json
-│   │   ├── Testing_Variabel_Ensemble.ipynb
 │   │   └── S2_S3_Ensemble_CrossDataset2_OBJ16.ipynb
+│   ├── testing_variabel/
+│   │   ├── output_test_variabel/
+│   │   │   ├── OBJ-01/
+│   │   │   ├── OBJ-02/
+│   │   │   ├── OBJ-03/
+│   │   │   ├── OBJ-04/
+│   │   │   ├── OBJ-05/
+│   │   │   ├── OBJ-06/
+│   │   │   ├── OBJ-07/
+│   │   │   ├── OBJ-08/
+│   │   │   ├── OBJ-09/
+│   │   │   ├── OBJ-10/
+│   │   │   ├── OBJ-11/
+│   │   │   ├── OBJ-12/
+│   │   │   ├── OBJ-13/
+│   │   │   ├── OBJ-14/
+│   │   │   ├── OBJ-15/
+│   │   │   ├── OBJ-16/
+│   │   │   ├── OBJ-17/
+│   │   │   ├── OBJ-18/
+│   │   │   ├── OBJ-19/
+│   │   │   ├── OBJ-20/
+│   │   │   ├── all_objectives.json
+│   │   │   ├── fig1_ds1_metrics.png
+│   │   │   ├── fig2_ds1_vs_ds2.png
+│   │   │   ├── fig3_ensemble_weights.png
+│   │   │   ├── fig4_heatmap.png
+│   │   │   └── objective_comparison.csv
+│   │   └── Testing_Variabel_Ensemble.ipynb
 │   ├── inceptionv3/
 │   │   ├── full_pipeline_results/
 │   │   │   ├── confusion_matrix_inceptionv3.png
@@ -220,7 +248,7 @@ OBJ-16 uniquely combined higher DS2 Accuracy (0.975 vs 0.974), higher DS2 Recall
 └── README.md
 ```
 
-Each model lives in its own subdirectory under `main/`. Xception is split across two notebooks because TPE search and final training were run in separate Kaggle sessions — `tpe_xception.json` is saved by NB1 and loaded as an input dataset in NB2. The ensemble notebooks reside under `main/ensemble_learning/`: `Testing_Variabel_Ensemble.ipynb` for objective selection (20 formulations) and `S2_S3_Ensemble_CrossDataset2_OBJ16.ipynb` for final ensemble training and evaluation.
+Each model lives in its own subdirectory under `main/`. Xception is split across two notebooks because TPE search and final training were run in separate Kaggle sessions — `tpe_xception.json` is saved by NB1 and loaded as an input dataset in NB2. The objective function selection experiment lives under `main/testing_variabel/`: `Testing_Variabel_Ensemble.ipynb` evaluates 20 formulations × 500 trials, with per-objective output folders (OBJ-01 to OBJ-20) and summary figures saved under `output_test_variabel/`. The final ensemble training and cross-dataset evaluation reside under `main/ensemble_learning/S2_S3_Ensemble_CrossDataset2_OBJ16.ipynb`.
 
 ---
 
@@ -317,7 +345,7 @@ S1-Xception-nb2-training.ipynb    →  loads tpe_xception.json as input dataset
 S1_ViT.ipynb
 ```
 
-**Step 2.** *(Optional)* Run `Testing_Variabel_Ensemble.ipynb` to reproduce the objective function selection experiment (20 formulations × 500 trials = 10,000 total TPE trials). This step is not required if you use the pre-selected OBJ-16.
+**Step 2.** *(Optional)* Run `main/testing_variabel/Testing_Variabel_Ensemble.ipynb` to reproduce the objective function selection experiment (20 formulations × 500 trials = 10,000 total TPE trials). Per-objective results are saved to `output_test_variabel/OBJ-XX/`. This step is not required if you use the pre-selected OBJ-16.
 
 **Step 3.** Download each model's `full_pipeline_results/` folder and place it under the corresponding subdirectory. Set `BASE_DIR` in the ensemble notebook:
 
