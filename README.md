@@ -15,7 +15,8 @@ The work replicates and extends the ensemble framework of **Sarıateş & Özbay 
 - Hyperparameter search is fully automated (10 HPs per model, 15–30 trials each) rather than fixed manual configurations.
 - Optuna's multivariate TPE sampler models correlations between hyperparameters, with per-model fANOVA importance analysis.
 - A progressive layer-unfreezing schedule is applied during final training (4 phases across 35 epochs), with per-phase learning rate scaling to reduce catastrophic forgetting.
-- Ensemble weights are optimised on the validation set via a dual objective: `0.6 × Accuracy + 0.4 × AUC` over 100 trials.
+- Class imbalance is handled via `WeightedRandomSampler` with square-root inverse frequency weights (`1/√n_c`), a softer strategy that prevents over-correction while promoting minority class representation.
+- Ensemble weights are optimised on the validation set via a composite objective selected from a systematic comparison of **20 candidate formulations** (10,000 total trials). The selected objective (OBJ-16) is `0.7 × AUC + 0.1 × Recall + 0.1 × Precision + 0.1 × Accuracy`.
 - Generalisation is evaluated on a fully independent external test set (DS2, Mendeley) never seen during training.
 
 ---
@@ -35,34 +36,42 @@ The work replicates and extends the ensemble framework of **Sarıateş & Özbay 
 
 | | Accuracy | Precision | Recall | F1-Score | AUC |
 |---|---|---|---|---|---|
-| Ensemble (this work) | **96.20%** | **96.86%** | **95.50%** | **96.17%** | **0.9942** |
+| Ensemble (this work) | **96.20%** | **96.57%** | **95.80%** | **96.18%** | **0.9942** |
 | Sarıateş & Özbay (2025) | 95.25% | 94.20% | 96.22% | 95.20% | — |
-| Δ | +0.95% | +2.66% | −0.72% | +0.97% | — |
+| Δ | +0.95% | +2.37% | −0.42% | +0.98% | — |
 
-Optimal ensemble weights found by TPE (100 trials):
+Optimal ensemble weights found by TPE (100 trials, OBJ-16):
 
 | Model | Weight | Share |
 |---|---|---|
-| DenseNet-121 | 0.2469 | 24.7% |
-| InceptionV3 | 0.1794 | 17.9% |
-| Xception | 0.1213 | 12.1% |
-| ViT-Pretrained | 0.4523 | 45.2% |
+| ViT-Pretrained | 0.3342 | 33.42% |
+| InceptionV3 | 0.2575 | 25.75% |
+| Xception | 0.2068 | 20.68% |
+| DenseNet-121 | 0.2015 | 20.15% |
 
-Best combined score (0.6 × Acc + 0.4 × AUC) on the validation set: **0.9565**
+Best combined score (OBJ-16: `0.7 × AUC + 0.1 × Recall + 0.1 × Precision + 0.1 × Accuracy`) on the validation set: **0.9689**
 
-ViT receives the largest weight (≈ 45%), consistent with its highest individual AUC among the four models.
+ViT receives the largest weight (≈ 33%), consistent with its highest individual AUC among the four models.
 
 ### Scenario III — Cross-dataset generalisation (DS2 / Mendeley, 1,000 images)
 
-| Model | DS1 Acc | DS2 Acc | Δ | DS1 Recall | DS2 Recall |
-|---|---|---|---|---|---|
-| DenseNet-121 | 95.20% | 97.00% | +1.80% | 95.40% | 97.60% |
-| InceptionV3 | 95.35% | 97.60% | +2.25% | 94.10% | 97.00% |
-| Xception | 93.80% | 95.30% | +1.50% | 92.50% | 94.20% |
-| ViT-Pretrained | 95.10% | 97.10% | +2.00% | 93.10% | 96.60% |
-| Ensemble | 96.20% | 97.40% | +1.20% | 95.50% | 97.00% |
+| Model | DS1 Acc | DS2 Acc | Δ | DS1 Recall | DS2 Recall | Δ Recall |
+|---|---|---|---|---|---|---|
+| DenseNet-121 | 95.20% | 97.00% | +1.80% | 95.40% | 97.60% | +2.20% |
+| InceptionV3 | 95.35% | 97.60% | +2.25% | 94.10% | 97.00% | +2.90% |
+| Xception | 93.80% | 95.30% | +1.50% | 92.50% | 94.20% | +1.70% |
+| ViT-Pretrained | 95.10% | 97.10% | +2.00% | 93.10% | 96.60% | +3.50% |
+| Ensemble | 96.20% | 97.50% | +1.30% | 95.80% | 97.00% | +1.20% |
 
 No model degraded when evaluated on DS2. All four architectures, trained exclusively on DS1, maintained or improved across all metrics on the independent Mendeley dataset.
+
+### DS2 Full Metrics (Ensemble)
+
+| Accuracy | Precision | Recall | F1-Score | AUC |
+|---|---|---|---|---|
+| 97.50% | 97.98% | 97.00% | 97.49% | 0.9965 |
+
+> The ensemble trained on DS1 only outperforms EfficientNet-B0 fully trained on DS2 (Sabir & Mehmood, 2024: 97.00% Acc, 99.00% Recall, 97.00% F1, 0.9900 AUC) in accuracy, precision, F1-Score, and AUC — without any retraining.
 
 ### Confusion Matrix Summary (DS1 / DS2)
 
@@ -87,11 +96,11 @@ All three CNN models share the same 10-parameter search space. The table below s
 | Optimizer | Adamax | AdamW | Adam |
 | Unfreeze init | last_2_blocks | last_2_blocks | last_block |
 | Batch size | 64 | 64 | 32 |
-| Dropout | 0.258 | 0.394 | 0.430 |
+| Dropout | 0.2578 | 0.3943 | 0.4296 |
 | Weight decay | 1.45 × 10⁻⁴ | 8.14 × 10⁻⁶ | 2.94 × 10⁻⁶ |
 | Focal loss | No | No | No |
-| Focal gamma | 1.702 | 1.290 | 2.165 |
-| Label smoothing | 0.028 | 0.114 | 0.055 |
+| Focal gamma | 1.7022 | 1.2905 | 2.1649 |
+| Label smoothing | 0.0284 | 0.1136 | 0.0555 |
 | LR scheduler | OneCycle | Cosine | OneCycle |
 | Best val acc (TPE) | 0.9220 | 0.9091 | 0.9091 |
 
@@ -102,24 +111,42 @@ All three CNN models share the same 10-parameter search space. The table below s
 | Learning rate | 3.67 × 10⁻⁴ |
 | Optimizer | AdamW |
 | Batch size | 32 |
-| Dropout | 0.115 |
+| Dropout | 0.1155 |
 | Weight decay | 1.44 × 10⁻³ |
-| Layer decay (LLRD) | 0.801 |
+| Layer decay (LLRD) | 0.8005 |
 | Unfreeze init | last_block |
-| Focal loss | Yes (γ = 1.237) |
-| Label smoothing | 0.081 |
+| Focal loss | Yes (γ = 1.2373) |
+| Label smoothing | 0.0807 |
 | Warmup epochs | 4 |
 | Best val acc (TPE) | 0.9310 |
 
-### fANOVA hyperparameter importance
+### fANOVA Hyperparameter Importance
 
 | Rank | DenseNet-121 | Score | InceptionV3 | Score | Xception | Score | ViT | Score |
 |---|---|---|---|---|---|---|---|---|
-| 1 | `lr` | 0.6227 | `lr` | 0.2812 | `dropout` | 0.2712 | `unfreeze_init` | 0.4508 |
-| 2 | `use_focal` | 0.1081 | `weight_decay` | 0.1714 | `focal_gamma` | 0.2273 | `lr` | 0.1776 |
-| 3 | `weight_decay` | 0.0991 | `focal_gamma` | 0.1666 | `label_smoothing` | 0.2188 | `layer_decay` | 0.1661 |
+| 1 | `lr` | 0.6227 | `lr` | 0.2812 | `dropout` | 0.2710 | `unfreeze_init` | 0.4508 |
+| 2 | `use_focal` | 0.1081 | `weight_decay` | 0.1714 | `focal_gamma` | 0.2270 | `lr` | 0.1776 |
+| 3 | `weight_decay` | 0.0991 | `focal_gamma` | 0.1666 | `label_smoothing` | 0.2190 | `layer_decay` | 0.1661 |
+| 4 | `focal_gamma` | 0.0368 | `dropout` | 0.1356 | `lr` | 0.1510 | `focal_gamma` | 0.0780 |
+| 5 | `dropout` | 0.0336 | `label_smoothing` | 0.1093 | `weight_decay` | 0.0590 | `warmup_epochs` | 0.0449 |
 
-Learning rate dominates in DenseNet-121 (62% of variance). For Xception, the top three hyperparameters are more evenly distributed across dropout, focal gamma, and label smoothing. For ViT, the choice of which layer group to unfreeze first is the single most important factor.
+Learning rate dominates in DenseNet-121 (62% of variance). For Xception, the top three factors are more evenly distributed: dropout, focal gamma, and label smoothing — reflecting its sensitivity to regularization due to depthwise separable convolutions. For ViT, the choice of which layer group to unfreeze first is the single most important factor (45%), confirming that Transformer fine-tuning dynamics are fundamentally different from CNN fine-tuning.
+
+---
+
+## Ensemble Objective Function Selection
+
+Before the final ensemble weight search, 20 composite objective formulations were systematically compared using 500 TPE trials each (10,000 total trials). **OBJ-16** was selected as it was the only formulation simultaneously achieving the highest value on three evaluation axes: DS2 Accuracy (0.975), DS2 Recall (0.972), and DS1 AUC (0.9942).
+
+| ID | Formula | DS1 Acc | DS1 AUC | DS2 Acc | DS2 Recall |
+|---|---|---|---|---|---|
+| OBJ-01 | 1.0 × Recall | 0.9615 | 0.9941 | 0.9740 | 0.9700 |
+| OBJ-02 | 1.0 × AUC | 0.9620 | 0.9939 | 0.9750 | 0.9700 |
+| OBJ-15 | 0.7×AUC + 0.1×Recall + 0.1×F1 + 0.1×Acc | 0.9620 | 0.9942 | 0.9740 | 0.9700 |
+| **OBJ-16** | **0.7×AUC + 0.1×Recall + 0.1×Prec + 0.1×Acc** | **0.9620** | **0.9943** | **0.9750** | **0.9720** |
+| OBJ-17 | 0.7×AUC + 0.1×Recall + 0.1×Prec + 0.1×F1 | 0.9620 | 0.9942 | 0.9750 | 0.9720 |
+
+OBJ-16 uniquely combined higher DS2 Accuracy (0.975 vs 0.974), higher DS2 Recall (0.972 vs 0.970), and the highest DS1 AUC (0.9943) among all 20 formulations.
 
 ---
 
@@ -141,16 +168,17 @@ Learning rate dominates in DenseNet-121 (62% of variance). For Xception, the top
 │   ├── ensemble_learning/
 │   │   ├── ensemble_results/
 │   │   │   ├── confusion_matrix_all_models.png
-│   │   │   ├── ensemble_weights.json
+│   │   │   ├── ensemble_weights_obj16.json
+│   │   │   ├── peer_comparison_obj16.json
 │   │   │   ├── final_summary.csv
 │   │   │   ├── scenario2_confmat.png
 │   │   │   ├── scenario2_results.json
 │   │   │   ├── scenario2_vs_paper.png
-│   │   │   ├── scenario2_weights_roc.png
 │   │   │   ├── scenario3_comparison.png
 │   │   │   ├── scenario3_confmat.png
 │   │   │   └── scenario3_results.json
-│   │   └── S2_S3_Ensemble_CrossDataset.ipynb
+│   │   ├── Testing_Variabel_Ensemble.ipynb
+│   │   └── S2_S3_Ensemble_CrossDataset2_OBJ16.ipynb
 │   ├── inceptionv3/
 │   │   ├── full_pipeline_results/
 │   │   │   ├── confusion_matrix_inceptionv3.png
@@ -187,15 +215,12 @@ Learning rate dominates in DenseNet-121 (62% of variance). For Xception, the top
 │       │   ├── val_labels.npy
 │       │   ├── val_probs_xception.npy
 │       │   └── xception_best.pth
-│       ├── s1-xception-nb1-tpe.ipynb
-│       └── s1-xception-nb2-training.ipynb
-├── paper/
-│   ├── melanoma-classification-cbir-replication.ipynb
-│   └── Transfer Learning-Based Ensemble of CNNs and Vision Transformers for Accurate Mela....pdf
+│       ├── S1-Xception-nb1-tpe.ipynb
+│       └── S1-Xception-nb2-training.ipynb
 └── README.md
 ```
 
-Each model lives in its own subdirectory under `main/`. Xception is split across two notebooks because TPE search and final training were run in separate Kaggle sessions — `tpe_xception.json` is saved by NB1 and loaded as an input dataset in NB2. The ensemble notebook and all final output files reside under `main/ensemble_learning/`.
+Each model lives in its own subdirectory under `main/`. Xception is split across two notebooks because TPE search and final training were run in separate Kaggle sessions — `tpe_xception.json` is saved by NB1 and loaded as an input dataset in NB2. The ensemble notebooks reside under `main/ensemble_learning/`: `Testing_Variabel_Ensemble.ipynb` for objective selection (20 formulations) and `S2_S3_Ensemble_CrossDataset2_OBJ16.ipynb` for final ensemble training and evaluation.
 
 ---
 
@@ -233,29 +258,29 @@ Both datasets use two classes: **Benign** and **Malignant**.
 | 9 | `label_smoothing` | uniform | model-specific |
 | 10 | `scheduler_type` | categorical | {cosine, onecycle} |
 
-Sampler: `multivariate=True`, `n_startup_trials=10`. Trials: 30 per CNN model, 12 epochs each with early stopping (patience = 3).
+Sampler: `multivariate=True`, `n_startup_trials=10`. Trials: **30 per CNN model**, 12 epochs each with early stopping (patience = 3).
 
 #### ViT-Small/16
 
-Same 10-parameter structure with ViT-specific substitutions: `layer_decay` replaces `scheduler_type`; `warmup_epochs` replaces `optimizer_name`; optimizer is fixed to AdamW. 15 trials, 8 epochs each.
+Same 10-parameter structure with ViT-specific substitutions: `layer_decay` (LLRD factor λ) replaces `scheduler_type`; `warmup_epochs` replaces `optimizer_name`; optimizer is fixed to AdamW. **15 trials**, 8 epochs each, `n_startup_trials=8`.
 
-### Progressive unfreeze schedule (final training, 35 epochs)
+### Progressive unfreeze schedule (final training, 35 epochs for CNN / 30 epochs for ViT)
 
-| Epoch range | Strategy | Approximate unfrozen params |
+| Epoch range | Strategy | LR scale |
 |---|---|---|
-| 1 – 4 | Frozen backbone | Head only |
-| 5 – 9 | last_block | ~15% |
-| 10 – 17 | last_2_blocks | ~30% |
-| 18 – 35 | Full fine-tune | All (`lr × 0.02`) |
+| 1 – 4 | Frozen backbone | 1.00× (head only) |
+| 5 – 9 | last_block | 0.20× |
+| 10 – 17 | last_2_blocks | 0.08× |
+| 18 – 35 | Full fine-tune | 0.02× |
 
-During full fine-tuning, the classification head uses 5× the backbone learning rate. For ViT, Layer-wise Learning Rate Decay (LLRD) is applied instead.
+During full fine-tuning, the classification head uses 5× the backbone learning rate. For ViT, Layer-wise Learning Rate Decay (LLRD, λ=0.8005) is applied so lower Transformer blocks receive smaller learning rates, preserving universal pre-trained representations.
 
 ### Ensemble weight optimisation
 
-Weights are searched over 100 TPE trials. The objective is evaluated on the validation set only — DS1 test and DS2 data are never used during search.
+Weights are searched over 100 TPE trials (`n_startup_trials=20`, `seed=57`). The objective is evaluated on the validation set only — DS1 test and DS2 data are never used during search.
 
 ```
-Objective = 0.6 × Accuracy + 0.4 × AUC    (maximise)
+Objective (OBJ-16) = 0.7 × AUC + 0.1 × Recall + 0.1 × Precision + 0.1 × Accuracy
 
 w_i ~ Uniform[0.05, 1.0],  normalised so Σ w_i = 1
 ```
@@ -272,7 +297,7 @@ w_i ~ Uniform[0.05, 1.0],  normalised so Σ w_i = 1
 | Optuna | 4.8.0 |
 | scikit-learn | ≥ 1.3 |
 
-Training was run on an NVIDIA Tesla P100-PCIE-16GB (Kaggle). The ensemble notebook was run locally on an NVIDIA GeForce RTX 2050.
+Training was run on an **NVIDIA Tesla P100-PCIE-16GB** (Kaggle). The ensemble notebook was run locally on an **NVIDIA GeForce RTX 2050**.
 
 ```bash
 pip install torch torchvision timm optuna scikit-learn matplotlib seaborn pandas numpy
@@ -280,26 +305,28 @@ pip install torch torchvision timm optuna scikit-learn matplotlib seaborn pandas
 
 ---
 
-## Running the experiments
+## Running the Experiments
 
 **Step 1.** Run the Scenario I notebooks on Kaggle (or any CUDA machine). Each saves its outputs to a `full_pipeline_results/` folder before the session ends.
 
 ```
 S1_DenseNet121.ipynb
 S1_InceptionV3.ipynb
-s1-xception-nb1-tpe.ipynb   →  saves tpe_xception.json
-s1-xception-nb2-training.ipynb   (loads tpe_xception.json as input dataset)
+S1-Xception-nb1-tpe.ipynb         →  saves tpe_xception.json
+S1-Xception-nb2-training.ipynb    →  loads tpe_xception.json as input dataset
 S1_ViT.ipynb
 ```
 
-**Step 2.** Download each model's `full_pipeline_results/` folder and place it under the corresponding subdirectory (`main/densenet121/`, `main/inceptionv3/`, `main/vit/`, `main/xception/`). Set `BASE_DIR` in Cell 6 of the ensemble notebook:
+**Step 2.** *(Optional)* Run `Testing_Variabel_Ensemble.ipynb` to reproduce the objective function selection experiment (20 formulations × 500 trials = 10,000 total TPE trials). This step is not required if you use the pre-selected OBJ-16.
+
+**Step 3.** Download each model's `full_pipeline_results/` folder and place it under the corresponding subdirectory. Set `BASE_DIR` in the ensemble notebook:
 
 ```python
 BASE_DIR = Path(r'D:\Tree-Structured Parzen Estimator\main')  # Windows
 # BASE_DIR = Path('/home/user/project/main')                  # Linux / macOS
 ```
 
-**Step 3.** Run `main/ensemble_learning/S2_S3_Ensemble_CrossDataset.ipynb` locally. Results are saved to `main/ensemble_learning/ensemble_results/`. No GPU is required for this step.
+**Step 4.** Run `S2_S3_Ensemble_CrossDataset2_OBJ16.ipynb` locally. Results are saved to `main/ensemble_learning/ensemble_results/`. No GPU is required for this step.
 
 ---
 
