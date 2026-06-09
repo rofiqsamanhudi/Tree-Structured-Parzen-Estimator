@@ -36,8 +36,8 @@ The work replicates and extends the ensemble framework of **Sarıateş & Özbay 
 
 | | Accuracy | Precision | Recall | F1-Score | AUC |
 |---|---|---|---|---|---|
-| Ensemble (this work) | **96.20%** | **96.57%** | **95.80%** | **96.18%** | **0.9942** |
 | Sarıateş & Özbay (2025) | 95.25% | 94.20% | 96.22% | 95.20% | 0.990 |
+| Ensemble (this work) | **96.20%** | **96.57%** | **95.80%** | **96.18%** | **0.9942** |
 | Δ | +0.95% | +2.37% | −0.42% | +0.98% | +0.0042 |
 
 Optimal ensemble weights found by TPE (100 trials, OBJ-16):
