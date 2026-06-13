@@ -8,11 +8,11 @@
     "threshold": 0.5
   },
   "ds2_ensemble": {
-    "accuracy": 0.976,
-    "precision": 0.9817813765182186,
+    "accuracy": 0.975,
+    "precision": 0.9797979797979798,
     "recall": 0.97,
-    "f1": 0.9758551307847082,
-    "auc": 0.997132,
+    "f1": 0.9748743718592965,
+    "auc": 0.99708,
     "threshold": 0.5
   },
   "individual_ds1": {
