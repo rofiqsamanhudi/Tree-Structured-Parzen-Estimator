@@ -1,0 +1,50 @@
+{
+  "ensemble": {
+    "accuracy": 0.9625,
+    "precision": 0.9714576962283384,
+    "recall": 0.953,
+    "f1": 0.9621403331650682,
+    "auc": 0.9935700000000001,
+    "threshold": 0.5
+  },
+  "individual": {
+    "densenet121": {
+      "accuracy": 0.959,
+      "precision": 0.9645748987854251,
+      "recall": 0.953,
+      "f1": 0.9587525150905433,
+      "auc": 0.988349,
+      "threshold": 0.5
+    },
+    "inception_v3": {
+      "accuracy": 0.9445,
+      "precision": 0.9440559440559441,
+      "recall": 0.945,
+      "f1": 0.9445277361319341,
+      "auc": 0.985495,
+      "threshold": 0.5
+    },
+    "xception": {
+      "accuracy": 0.9495,
+      "precision": 0.94994994994995,
+      "recall": 0.949,
+      "f1": 0.9494747373686844,
+      "auc": 0.9865480000000001,
+      "threshold": 0.5
+    },
+    "vit_scratch": {
+      "accuracy": 0.951,
+      "precision": 0.9697916666666667,
+      "recall": 0.931,
+      "f1": 0.95,
+      "auc": 0.989805,
+      "threshold": 0.5
+    }
+  },
+  "weights": {
+    "densenet121": 0.06671097433400733,
+    "inception_v3": 0.1238253591444554,
+    "xception": 0.33877340814424395,
+    "vit_scratch": 0.47069025837729334
+  }
+}
