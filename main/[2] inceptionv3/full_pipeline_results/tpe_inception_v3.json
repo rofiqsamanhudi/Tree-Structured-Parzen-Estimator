@@ -1,0 +1,11 @@
+{
+  "lr": 0.0019057174434080474,
+  "batch_size": 32,
+  "dropout": 0.26419157844870184,
+  "weight_decay": 6.624310605949985e-06,
+  "optimizer_name": "adam",
+  "use_focal": true,
+  "focal_gamma": 1.0842892970704363,
+  "label_smoothing": 0.06762703962817992,
+  "best_val_acc": 0.8630751964085297
+}
