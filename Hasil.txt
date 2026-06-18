@@ -1,0 +1,289 @@
+1. Densenet-121:
+Search space:
+        if arch_name == 'densenet121':
+            lr  = trial.suggest_float('lr',  3e-4, 1.5e-2, log=True)
+            bs  = trial.suggest_categorical('batch_size', [32, 64])
+            do  = trial.suggest_float('dropout', 0.15, 0.45)
+            wd  = trial.suggest_float('weight_decay', 1e-6, 5e-4, log=True)
+            opt = trial.suggest_categorical('optimizer_name',
+                      ['adam', 'adamw', 'adamax'])
+            uf  = trial.suggest_categorical('use_focal', [True, False])
+            fg  = trial.suggest_float('focal_gamma', 0.5, 2.5)
+            ls  = trial.suggest_float('label_smoothing', 0.00, 0.12)
+
+            ui  = 'frozen'
+            sc  = 'cosine'
+
+Hasil Search space:
+{
+  "lr": 0.004004743782924012,
+  "batch_size": 64,
+  "dropout": 0.36548432597632635,
+  "weight_decay": 1.3551027943175312e-06,
+  "optimizer_name": "adamw",
+  "use_focal": false,
+  "focal_gamma": 1.7441316853461215,
+  "label_smoothing": 0.028325119630524025,
+  "best_val_acc": 0.9124579124579124
+}
+
+Hyperparameter Importance (DenseNet-121) — fANOVA:
+  Hyperparameter         Importance  Rank
+  ------------------------------------------
+  lr                         0.3936  #1  ███████████████████
+  weight_decay               0.2272  #2  ███████████
+  dropout                    0.1978  #3  █████████
+  focal_gamma                0.1083  #4  █████
+  label_smoothing            0.0264  #5  █
+  use_focal                  0.0226  #6  █
+  optimizer_name             0.0205  #7  █
+  batch_size                 0.0036  #8  
+
+DenseNet-121 — DS1 vs DS2 Generalization:
+  Metric            DS1      DS2      Delta
+  ------------------------------------------
+  accuracy       0.9590   0.9820    +0.0230  ▲
+  precision      0.9646   0.9782    +0.0136  ▲
+  recall         0.9530   0.9860    +0.0330  ▲
+  f1             0.9588   0.9821    +0.0233  ▲
+
+2. InceptionV3
+Search space:
+        elif arch_name == 'inception_v3':
+            # PERBAIKAN: range lr dipersempit dari [2e-4, 8e-3] -> [2e-4, 3e-3].
+            # Run sebelumnya memilih lr=2.84e-3, yang menyebabkan training
+            # collapse di fase 'last_2_blocks'/'full' saat progressive
+            # unfreeze (TPE search tidak menguji fase ini, hanya 'frozen').
+            lr  = trial.suggest_float('lr',  2e-4, 3e-3, log=True)
+            bs  = trial.suggest_categorical('batch_size', [32, 64])
+            do  = trial.suggest_float('dropout', 0.20, 0.55)
+            wd  = trial.suggest_float('weight_decay', 1e-6, 5e-4, log=True)
+            opt = trial.suggest_categorical('optimizer_name',
+                      ['adam', 'adamw', 'adamax'])
+            uf  = trial.suggest_categorical('use_focal', [True, False])
+            fg  = trial.suggest_float('focal_gamma', 0.5, 2.5)
+            ls  = trial.suggest_float('label_smoothing', 0.02, 0.15)
+            # HIPOTESIS (terbukti pada DenseNet-121): 'unfreeze_init' &
+            # 'scheduler_type' TIDAK ikut dicari TPE. Keduanya dipakai
+            # seperti final training original (selalu 'frozen' +
+            # CosineAnnealingLR), karena kombinasi ini terbukti memberi
+            # hasil terbaik pada eksperimen sebelumnya.
+            ui  = 'frozen'
+            sc  = 'cosine'
+
+Hasil Search space:
+{
+  "lr": 0.0019057174434080474,
+  "batch_size": 32,
+  "dropout": 0.26419157844870184,
+  "weight_decay": 6.624310605949985e-06,
+  "optimizer_name": "adam",
+  "use_focal": true,
+  "focal_gamma": 1.0842892970704363,
+  "label_smoothing": 0.06762703962817992,
+  "best_val_acc": 0.8630751964085297
+}
+
+Hyperparameter Importance (InceptionV3) — fANOVA:
+  Hyperparameter         Importance  Rank
+  ------------------------------------------
+  dropout                    0.3075  #1  ███████████████
+  label_smoothing            0.2415  #2  ████████████
+  weight_decay               0.1930  #3  █████████
+  lr                         0.0919  #4  ████
+  focal_gamma                0.0761  #5  ███
+  optimizer_name             0.0358  #6  █
+  batch_size                 0.0328  #7  █
+  use_focal                  0.0214  #8  █
+
+InceptionV3 — DS1 vs DS2 Generalization:
+  Metric            DS1      DS2      Delta
+  ------------------------------------------
+  accuracy       0.9445   0.9580    +0.0135  ▲
+  precision      0.9441   0.9580    +0.0139  ▲
+  recall         0.9450   0.9580    +0.0130  ▲
+  f1             0.9445   0.9580    +0.0135  ▲
+
+3. ViT:
+Search space:
+        lr          = trial.suggest_float('lr',           5e-6, 5e-4, log=True)
+        bs          = trial.suggest_categorical('batch_size', [16, 32])
+        dropout     = trial.suggest_float('dropout',      0.05, 0.25)
+        wd          = trial.suggest_float('weight_decay', 1e-4, 1e-2, log=True)
+        layer_decay = trial.suggest_float('layer_decay',  0.65, 0.90)
+        ui          = trial.suggest_categorical('unfreeze_init',
+                          ['last_block', 'last_2_blocks'])
+        use_focal   = trial.suggest_categorical('use_focal', [True, False])
+        fg          = trial.suggest_float('focal_gamma',     0.5, 1.5)
+        ls          = trial.suggest_float('label_smoothing', 0.05, 0.15)
+        warmup      = trial.suggest_int('warmup_epochs',    3, 10)
+
+Hasil Search space:
+{
+  "lr": 0.00036681669354887524,
+  "batch_size": 32,
+  "dropout": 0.11545929276873033,
+  "weight_decay": 0.001439921671170037,
+  "layer_decay": 0.8005280054963044,
+  "unfreeze_init": "last_block",
+  "use_focal": true,
+  "focal_gamma": 1.2372815421259014,
+  "label_smoothing": 0.08065035670756877,
+  "warmup_epochs": 4,
+  "optimizer_name": "adamw",
+  "best_val_acc": 0.930976430976431
+}
+
+Hyperparameter Importance (ViT-Pretrained) — fANOVA:
+  Hyperparameter         Importance  Rank
+  ------------------------------------------
+  unfreeze_init              0.4508  #1  ██████████████████████
+  lr                         0.1776  #2  ████████
+  layer_decay                0.1661  #3  ████████
+  focal_gamma                0.0780  #4  ███
+  warmup_epochs              0.0449  #5  ██
+  dropout                    0.0373  #6  █
+  weight_decay               0.0173  #7  
+  use_focal                  0.0167  #8  
+  label_smoothing            0.0098  #9  
+  batch_size                 0.0015  #10  
+
+
+ViT-Pretrained — DS1 vs DS2 Generalization:
+  Metric            DS1      DS2      Delta
+  ------------------------------------------
+  accuracy       0.9510   0.9690    +0.0180  ▲
+  precision      0.9698   0.9757    +0.0059  ▲
+  recall         0.9310   0.9620    +0.0310  ▲
+  f1             0.9500   0.9688    +0.0188  ▲
+
+4. Xception
+search space:
+        else:  # xception
+            lr  = trial.suggest_float('lr',  1e-4, 5e-3, log=True)
+            bs  = trial.suggest_categorical('batch_size', [32, 64])
+            do  = trial.suggest_float('dropout', 0.25, 0.55)
+            wd  = trial.suggest_float('weight_decay', 1e-6, 1e-3, log=True)
+            opt = trial.suggest_categorical('optimizer_name',
+                      ['adam', 'adamw', 'adamax'])
+            uf  = trial.suggest_categorical('use_focal', [True, False])
+            fg  = trial.suggest_float('focal_gamma', 0.5, 2.5)
+            ls  = trial.suggest_float('label_smoothing', 0.03, 0.15)
+            # HIPOTESIS (terbukti pada DenseNet-121 & InceptionV3):
+            # 'unfreeze_init' & 'scheduler_type' TIDAK ikut dicari TPE.
+            # Keduanya dipakai seperti final training original (selalu
+            # 'frozen' + CosineAnnealingLR), karena kombinasi ini terbukti
+            # memberi hasil terbaik pada eksperimen sebelumnya.
+            ui  = 'frozen'
+            sc  = 'cosine'
+
+Hasil searchspace:
+{
+  "lr": 0.0031607932044720433,
+  "batch_size": 32,
+  "dropout": 0.2958651752185381,
+  "weight_decay": 2.959398487417047e-06,
+  "optimizer_name": "adam",
+  "use_focal": false,
+  "focal_gamma": 0.9217179286709183,
+  "label_smoothing": 0.11215573871467463,
+  "best_val_acc": 0.8804713804713805
+}
+
+Hyperparameter Importance (Xception) — fANOVA:
+  Hyperparameter         Importance  Rank
+  ------------------------------------------
+  label_smoothing            0.3653  #1  ██████████████████
+  focal_gamma                0.2176  #2  ██████████
+  lr                         0.1900  #3  █████████
+  dropout                    0.0822  #4  ████
+  optimizer_name             0.0692  #5  ███
+  batch_size                 0.0446  #6  ██
+  use_focal                  0.0204  #7  █
+  weight_decay               0.0107  #8  
+
+Xception — DS1 vs DS2 Generalization:
+  Metric            DS1      DS2      Delta
+  ------------------------------------------
+  accuracy       0.9495   0.9680    +0.0185  ▲
+  precision      0.9499   0.9661    +0.0162  ▲
+  recall         0.9490   0.9700    +0.0210  ▲
+  f1             0.9495   0.9681    +0.0186  ▲
+
+
+5. Ensemble Learning:
+Bobot:
+SELECTION_W = {
+    'ds1_auc'    : 0.50,
+    'ds2_auc'    : 0.30,
+    'ds1_recall' : 0.10,
+    'ds2_recall' : 0.10,
+}
+
+- 10 objectives × 100 trials = 1000 total trials
+  ID         Seed  Formula
+  --------------------------------------------------------------------------------
+  OBJ-01       42  1.0 x AUC
+  OBJ-02       43  1.0 x Recall
+  OBJ-03       44  1.0 x Accuracy
+  OBJ-04       45  1.0 x F1
+  OBJ-05       46  0.7 x AUC + 0.3 x Recall
+  OBJ-06       47  0.6 x AUC + 0.4 x Recall
+  OBJ-07       48  0.7 x AUC + 0.1 x Recall + 0.1 x Precision + 0.1 x Accuracy
+  OBJ-08       49  0.5 x AUC + 0.3 x Recall + 0.2 x F1
+  OBJ-09       50  0.4 x Recall + 0.3 x AUC + 0.2 x F1 + 0.1 x Accuracy
+  OBJ-10       51  0.25 x AUC + 0.25 x Recall + 0.25 x F1 + 0.25 x Accuracy
+
+- Hasil Ensemble Best Weight:
+{
+  "objective_id": "OBJ-10",
+  "objective_label": "0.25 x AUC + 0.25 x Recall + 0.25 x F1 + 0.25 x Accuracy",
+  "weights": {
+    "densenet121": 0.06671097433400733,
+    "inception_v3": 0.1238253591444554,
+    "xception": 0.33877340814424395,
+    "vit_scratch": 0.47069025837729334
+  }
+}
+
+Objective terpilih : OBJ-10  (0.25 x AUC + 0.25 x Recall + 0.25 x F1 + 0.25 x Accuracy)
+Bobot ensemble     :
+  DenseNet-121     0.0667  (6.67%)
+  InceptionV3      0.1238  (12.38%)
+  Xception         0.3388  (33.88%)
+  ViT-Pretrained   0.4707  (47.07%)
+
+- Pemilihan Objective Terbaik
+Objective dipilih berdasarkan **selection score gabungan DS1 + DS2** — bukan val score semata:
+
+$$\text{score} = 0.50 \times \text{AUC}_{DS1} + 0.30 \times \text{AUC}_{DS2} + 0.10 \times \text{Recall}_{DS1} + 0.10 \times \text{Recall}_{DS2}$$
+
+Rationale: AUC threshold-independent dan robust untuk data imbalanced melanoma;  
+Recall menjaga sensitivitas karena *false negative = missed cancer*.
+
+
+Dataset 1 – Melanoma Cancer Image Dataset
+Source	Model	Accuracy	Precision	Recall	F1-Score
+Sarıateş & Özbay	DenseNet121	94.50%	93.90%	95.04%	94.47%
+Sarıateş & Özbay	InceptionV3	91.20%	93.20%	89.62%	91.37%
+Sarıateş & Özbay	ViT	88.25%	90.50%	86.60%	88.50%
+Sarıateş & Özbay	Xception	93.80%	93.00%	94.51%	93.75%
+Sarıateş & Özbay	Ensemble Learning	95.25%	94.20%	96.22%	95.20%
+Mahmud et al.	Xception (custom dense)	91.09%	94.72%	91.79%	91.95%
+Proposed Model	DenseNet-121	95.90%	96.46%	95.30%	95.88%
+Proposed Model	InceptionV3	94.45%	94.41%	94.50%	94.45%
+Proposed Model	Xception	94.95%	94.99%	94.90%	94.95%
+Proposed Model	ViT-Pretrained	95.10%	96.98%	93.10%	95.00%
+Proposed Model	Ensemble	96.25%	97.15%	95.30%	96.21%
+
+Dataset 2 – CNN for Melanoma Detection
+Source	Model	Accuracy	Precision	Recall	F1-Score
+Mahmud et al.	Xception (custom dense)	89.29%	89.61%	89.17%	89.39%
+Sabir & Mehmood	Basic CNN	80.00%	93.00%	64.00%	76.00%
+Sabir & Mehmood	ResNet-18	87.00%	91.00%	82.00%	86.00%
+Sabir & Mehmood	EfficientNet-B0	97.00%	95.00%	99.00%	97.00%
+Proposed Model	DenseNet-121	98.20%	97.82%	98.60%	98.21%
+Proposed Model	InceptionV3	95.80%	95.80%	95.80%	95.80%
+Proposed Model	Xception	96.80%	96.61%	97.00%	96.81%
+Proposed Model	ViT-Pretrained	96.90%	97.57%	96.20%	96.88%
+Proposed Model	Ensemble	97.80%	97.99%	97.60%	97.80%
