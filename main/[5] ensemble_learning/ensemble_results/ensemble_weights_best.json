@@ -1,10 +1,16 @@
 {
-  "objective_id": "OBJ-10",
-  "objective_label": "0.25 x AUC + 0.25 x Recall + 0.25 x F1 + 0.25 x Accuracy",
+  "trial_id": 460,
+  "objective_label": "0.08\u00d7AUC + 0.05\u00d7Recall + 0.18\u00d7F1 + 0.69\u00d7Acc",
+  "w_obj": {
+    "auc": 0.08078516564857867,
+    "recall": 0.054308766731213834,
+    "f1": 0.17508459962231418,
+    "acc": 0.6898214579600604
+  },
   "weights": {
-    "densenet121": 0.06671097433400733,
-    "inception_v3": 0.1238253591444554,
-    "xception": 0.33877340814424395,
-    "vit_scratch": 0.47069025837729334
+    "densenet121": 0.4705751305716629,
+    "inception_v3": 0.08933832917267005,
+    "xception": 0.28497140669007254,
+    "vit_scratch": 0.15511513356559442
   }
 }
