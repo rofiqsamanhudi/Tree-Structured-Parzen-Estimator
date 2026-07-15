@@ -1,0 +1,6 @@
+No,Index Sampel,Label Aktual,Label Prediksi,Probabilitas,Hasil
+1,187,Benign,Benign,0.0234,True
+2,792,Benign,Benign,0.0238,True
+3,1164,Malignant,Malignant,0.9844,True
+4,1412,Malignant,Malignant,0.9834,True
+5,1628,Malignant,Benign,0.0462,False
