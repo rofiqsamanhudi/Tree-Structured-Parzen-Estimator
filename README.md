@@ -1,49 +1,70 @@
-# Model Klasifikasi Melanoma
+# Melanoma Classification Model
 
-Model deep learning untuk klasifikasi citra dermoskopi kulit menjadi dua kelas: **benign** (jinak) dan **malignant** (ganas). Model dibangun menggunakan pendekatan ensemble transfer learning dari empat arsitektur CNN dan Vision Transformer.
+A deep learning model for classifying dermoscopic skin images into two categories: **benign** and **malignant**. The model is built using an ensemble transfer learning approach combining four CNN architectures and a Vision Transformer.
 
-## Isi Folder
+## Folder Contents
 
-| File | Keterangan |
+| File | Description |
 |---|---|
-| `densenet121_best.pth` | Model DenseNet-121 |
-| `inception_v3_best.pth` | Model InceptionV3 |
-| `xception_best.pth` | Model Xception |
-| `vit_best.pth` | Model ViT-Small/16 (Vision Transformer) |
-| `ensemble_best.pth` | Gabungan keempat model di atas dengan bobot ensemble |
-| `model_def.py` | Kode arsitektur untuk memuat dan menjalankan model |
+| `densenet121_best.pth` | DenseNet-121 model |
+| `inception_v3_best.pth` | InceptionV3 model |
+| `xception_best.pth` | Xception model |
+| `vit_best.pth` | ViT-Small/16 (Vision Transformer) model |
+| `ensemble_best.pth` | Combination of all four models above using ensemble weights |
+| `model_def.py` | Architecture code for loading and running the models |
 
-Kelima model bisa dipakai secara terpisah (per arsitektur) maupun sebagai satu kesatuan ensemble, tergantung kebutuhan.
+Each of the five models can be used individually (per architecture) or as a unified ensemble, depending on the use case.
 
-## Library yang Dibutuhkan
+## Requirements
 
-```
-torch>=2.0
-timm>=1.0
-Pillow
-torchvision
-```
+- Python 3.9 or later
+- **torch** — core framework for loading and running the models
+- **torchvision** — image transformations for preprocessing
+- **timm** — required specifically for the ViT-Small/16 and Xception architectures, which are loaded through this library
+- **Pillow** — reading and processing input image files
 
-Instalasi:
+### Installation (CPU)
 
 ```bash
-pip install torch timm pillow torchvision
+pip install torch torchvision timm pillow
 ```
 
-## Cara Pemakaian
+### Installation (GPU, CUDA 12.1)
 
-Contoh menjalankan prediksi menggunakan ensemble (4 model sekaligus):
+To run on GPU, install `torch`/`torchvision` from the official PyTorch index matching your system's CUDA version (check your CUDA version with `nvidia-smi`):
+
+```bash
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+pip install timm pillow
+```
+
+For other CUDA versions, adjust `cu121` in the URL accordingly (e.g., `cu118`, `cu124`). See the full list at [pytorch.org/get-started/locally](https://pytorch.org/get-started/locally/).
+
+### Versions Used During Development
+
+To reproduce the research results exactly, the following library versions were used during development:
+
+```
+torch==2.5.1
+torchvision==0.20.1
+timm==1.0.22
+Pillow==12.0.0
+```
+
+## Usage
+
+Example of running a prediction using the ensemble (all four models at once):
 
 ```python
 from model_def import MelanomaEnsemble
 
 model = MelanomaEnsemble("ensemble_best.pth", device="cpu")
-result = model.predict("gambar_kulit.jpg")
+result = model.predict("skin_image.jpg")
 
 print(result)
 ```
 
-Output berupa hasil prediksi dari masing-masing model dan hasil akhir ensemble:
+Output includes predictions from each individual model as well as the final ensemble result:
 
 ```python
 {
@@ -61,33 +82,35 @@ Output berupa hasil prediksi dari masing-masing model dan hasil akhir ensemble:
 }
 ```
 
-## Spesifikasi Model
+## Model Specifications
 
-| Model | Ukuran Input | Bobot Ensemble |
+| Model | Input Size | Ensemble Weight |
 |---|---|---|
 | DenseNet-121 | 224x224 | 0.4706 |
 | InceptionV3 | 299x299 | 0.0893 |
 | Xception | 299x299 | 0.2850 |
 | ViT-Small/16 | 224x224 | 0.1551 |
 
-Normalisasi gambar menggunakan standar ImageNet (mean: `[0.485, 0.456, 0.406]`, std: `[0.229, 0.224, 0.225]`), sudah otomatis ditangani di dalam `model_def.py`.
+Image normalization follows the standard ImageNet convention (mean: `[0.485, 0.456, 0.406]`, std: `[0.229, 0.224, 0.225]`), handled automatically within `model_def.py`.
 
-Urutan label kelas: `["benign", "malignant"]`.
+Class label order: `["benign", "malignant"]`.
 
-## Sumber Dataset
+## Dataset Sources
 
-Model dilatih menggunakan dataset dermoskopi publik:
+The model was trained on the following public dermoscopic datasets:
 - [Melanoma Cancer Dataset (Bhavesh Mittal)](https://www.kaggle.com/datasets/bhaveshmittal/melanoma-cancer-dataset)
 - [Melanoma Skin Cancer Dataset of 10000 Images (Hasnain Javed)](https://data.mendeley.com/datasets/ggh6g39ps2/2)
 
 ## Authorship
 
-Model ini dikembangkan sebagai bagian dari penelitian skripsi:
+This model was developed as part of an undergraduate thesis research project:
 
 **Rofiq Samanhudi**
-NIM 202210370311260
-Program Studi Informatika, Universitas Muhammadiyah Malang
+Student ID 202210370311260
+Department of Informatics, Universitas Muhammadiyah Malang
 
-Dosen Pembimbing: Ir. Agus Eko Minarno S.Kom., M.Kom. IPM.
+Thesis Advisor: Ir. Agus Eko Minarno S.Kom., M.Kom. IPM.
 
-Judul penelitian: Peningkatan Performa Klasifikasi Melanoma Berbasis Ensemble Transfer Learning Menggunakan Bayesian Optimization dengan Tree-structured Parzen Estimator
+Research title (Eng): Enhanced Melanoma Classification Performance Based on Ensemble Transfer Learning Using Bayesian Optimization with Tree-Structured Parzen Estimator
+
+Research title (Ind): Peningkatan Performa Klasifikasi Melanoma Berbasis Ensemble Transfer Learning Menggunakan Bayesian Optimization dengan Tree-structured Parzen Estimator
