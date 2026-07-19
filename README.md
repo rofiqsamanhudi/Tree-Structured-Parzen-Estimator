@@ -42,14 +42,16 @@ For other CUDA versions, adjust `cu121` in the URL accordingly (e.g., `cu118`, `
 
 ### Versions Used During Development
 
-To reproduce the research results exactly, the following library versions were used during development:
+To reproduce the research results exactly, the following library versions were used during development (trained with CUDA 12.1):
 
 ```
-torch==2.5.1
-torchvision==0.20.1
+torch==2.5.1+cu121
+torchvision==0.20.1+cu121
 timm==1.0.22
 Pillow==12.0.0
 ```
+
+> **Note:** The `+cu121` suffix indicates the GPU build of PyTorch used during training. If you install via the CUDA 12.1 command above, `pip` will resolve to this exact build automatically. For CPU-only installs, use the plain versions instead (`torch==2.5.1`, `torchvision==0.20.1`), since the `+cu121` build is not available through the default PyPI index.
 
 ## Usage
 
